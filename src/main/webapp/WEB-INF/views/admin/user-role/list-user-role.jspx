@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : list-user-role
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:tag="urn:jsptagdir:/WEB-INF/tags/">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <tag:content title="User Role :: List" description="Manage user roles">
+        <jsp:attribute name="breadcrumb">
+        </jsp:attribute>
+
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title"><!-- --></h3>
+            </div>
+            <div class="box-body">
+                <tag:dataTable id="userRoleTable" 
+                               title="User Roles"
+                               exportable="true">
+                    <jsp:attribute name="tableFilter">
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="institutionTypeFilter">Institution Type</label>
+                                <select id="institutionTypeFilter" name="institutionType" class="form-control">
+                                    <option value="">All</option>
+                                    <option value="1">NIBSS</option>
+                                    <option value="2">BANK</option>
+                                    <option value="3">THIRD PARTY</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="userRoleNameFilter">User Role Name</label>
+                                <input id="userRoleNameFilter" value="${userRoleTableModel.cachedFilterMap['userRoleName']}" name="userRoleName" class="form-control"  type="text" placeholder="User Role Name"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="flagFilter">Status</label>
+                                <select id="flagFilter" name="flag" class="form-control">
+                                    <option value="">All</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    App.ui.selectDropdown({id: 'flagFilter', selectedValue: '${userRoleTableModel.cachedFilterMap['flag']}'});
+                                    App.ui.selectDropdown({id: 'institutionTypeFilter', selectedValue: '${userRoleTableModel.cachedFilterMap['institutionType']}'});
+                                });
+                            </script>
+                        </div>
+                    </jsp:attribute>
+                    <jsp:attribute name="tableAction">
+                        <c:if test="${profileBean.hasRole('create-user-role')}">
+                            <div class="btn-group pull-right">
+                                <button id="createUserRoleMenuBtn" title="Create a New User Role" type="button" class="btn btn-flat btn-primary"  aria-expanded="true" onclick="window.createUserRoleModal.show();
+                                        return false;">
+                                    <span class="fa fa-file"><!-- --></span>
+                                    New
+                                </button>
+                            </div>
+                        </c:if>
+                    </jsp:attribute>
+
+                </tag:dataTable>
+
+                <c:if test="${profileBean.hasRole('create-user-role')}">
+                    <tag:modalBox id="createUserRoleModal" 
+                                  title="User Role :: New" 
+                                  contentUrl="create" 
+                                  actionUrl="create.action"
+                                  onSuccess="if(this.response.valid)window.userRoleTable.reload();"/>
+                </c:if>
+                <c:if test="${profileBean.hasRole('edit-user-role')}">
+                    <tag:modalBox id="editUserRoleModal" 
+                                  title="User Role :: Edit" 
+                                  contentUrl="edit" 
+                                  actionUrl="edit.action"
+                                  onSuccess="if(this.response.valid)window.userRoleTable.reload(false);"/>
+                </c:if>
+                <tag:modalBox id="viewUserRoleModal" 
+                              title="User Role :: View" 
+                              contentUrl="view" 
+                              actionButton="false"/>
+
+                <script type="text/javascript">
+                    $(function () {
+                        App.ui.datatable({
+                            id: 'userRoleTable',
+                            columns: [
+                                {title: '', data: 'userRoleId', visible: false},
+                                {title: 'Institution Type', data: 'institutionType.institutionTypeName'},
+                                {title: 'User Role Name', data: 'userRoleName'},
+                                {title: 'Status', data: 'flagName'},
+                                {title: 'Actions', data: 'enabled', actions: {
+                                        view: {
+                                            title: 'View User Role',
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                window.viewUserRoleModal.show({ajax: {data: {userRoleId: rowData.userRoleId}}}, true);
+                                            }
+                                        },
+                                        edit: {
+                                            title: 'Edit User Role',
+                                            rendered:${profileBean.hasRole('edit-user-role')},
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                window.editUserRoleModal.show({ajax: {data: {userRoleId: rowData.userRoleId}}}, {ajax: {data: {userRoleId: rowData.userRoleId}, type: App.HTTP_PUT}});
+                                            }
+                                        },
+                                        delete: {
+                                            title: 'Delete User Role',
+                                            rendered:${profileBean.hasRole('delete-user-role')},
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                App.ui.confirmDialogBox({title: 'Delete User Role'}, function () {
+                                                    App.ajax.doAction({ajax: {url: 'delete.action?userRoleId=' + rowData.userRoleId, type: App.HTTP_DELETE}, onsuccess: function () {
+                                                            window.userRoleTable.reload(false);
+                                                        }});
+                                                }).show();
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+
+                    });
+                </script>
+            </div>
+        </div>
+    </tag:content>
+
+</jsp:root>

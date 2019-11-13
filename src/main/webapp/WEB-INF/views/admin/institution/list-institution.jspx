@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : list-institution
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:tag="urn:jsptagdir:/WEB-INF/tags/">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <tag:content title="Institution :: List" description="Manage institutions">
+        <jsp:attribute name="breadcrumb">
+        </jsp:attribute>
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title"><!-- --></h3>
+            </div>
+            <div class="box-body">
+                <tag:dataTable id="institutionTable" 
+                               title="Institutions"
+                               exportable="true"
+                               filterCollapsed="${institutionTableModel.filterCollapsed}">
+                    <jsp:attribute name="tableFilter">
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="institutionCodeFilter">Institution Code</label>
+                                <input id="institutionCodeFilter" value="${institutionTableModel.cachedFilterMap['institutionCode']}" name="institutionCode" class="form-control"  type="text" placeholder="Institution Code"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="institutionNameFilter">Institution Name</label>
+                                <input id="institutionNameFilter" value="${institutionTableModel.cachedFilterMap['institutionName']}" name="institutionName" class="form-control"  type="text" placeholder="Institution Name"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="institutionTypeFilter">Institution Type</label>
+                                <select id="institutionTypeFilter" name="institutionType" class="form-control">
+                                    <option value="">All</option>
+                                    <option value="1">NIBSS</option>
+                                    <option value="2">BANK</option>
+                                    <option value="3">THIRDPARTY</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="flagFilter">Status</label>
+                                <select id="flagFilter" name="flag" class="form-control">
+                                    <option value="">All</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    App.ui.selectDropdown({id: 'flagFilter', selectedValue: '${institutionTableModel.cachedFilterMap['flag']}'});
+                                    App.ui.selectDropdown({id: 'institutionTypeFilter', selectedValue: '${institutionTableModel.cachedFilterMap['institutionType']}'});
+                                });</script>
+                        </div>
+                    </jsp:attribute>
+                    <jsp:attribute name="tableAction">
+                        <c:if test="${profileBean.hasRole('create-institution')}">
+                            <div class="dropdown btn-group pull-right">
+                                <button id="createInstitutionMenuBtn" title="Create a New Institution" type="button" class="btn btn-flat btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true"
+                                        >
+                                    <span class="fa fa-file"><!-- --></span>
+                                    New
+                                    <span class="caret"><!-- --></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="createInstitutionMenuBtn">
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="window.showCreateInstitutionModal(1);
+                                            return false;" >NIBSS</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="window.showCreateInstitutionModal(2);
+                                            return false;" >BANK</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="window.showCreateInstitutionModal(3);
+                                            return false;">THIRDPARTY</a></li>
+                                </ul>
+                            </div>
+                        </c:if>
+                    </jsp:attribute>
+
+                </tag:dataTable>
+
+                <c:if test="${profileBean.hasRole('create-institution')}">
+                    <tag:modalBox id="createInstitutionModal" 
+                                  title="Institution :: New" 
+                                  onSuccess="if(this.response.valid)window.institutionTable.reload();"/>
+                </c:if>
+                <c:if test="${profileBean.hasRole('edit-institution')}">
+                    <tag:modalBox id="editInstitutionModal" 
+                                  title="Institution :: Edit" 
+                                  onSuccess="if(this.response.valid)window.institutionTable.reload(false);"/>
+                </c:if>
+                <tag:modalBox id="viewInstitutionModal" 
+                              title="Institution :: View"
+                              actionButton="false"/>
+
+
+
+                <script type="text/javascript">
+                    $(function () {
+                        App.ui.datatable({
+                            id: 'institutionTable',
+                            url: '',
+                            columns: [
+                                {title: '', data: 'institutionId', visible: false},
+                                {title: 'Institution Code', data: 'institutionCode'},
+                                {title: 'Institution Name', data: 'institutionName'},
+                                {title: 'Institution Type', data: 'institutionTypeName', name: 'institutionType.institutionTypeName'},
+                                {title: 'Status', data: 'flagName', name: 'flag'},
+                                {title: 'Actions', data: 'enabled', actions: {
+                                        view: {
+                                            title: 'View Institution',
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                var type = rowData.institutionTypeId;
+                                                var path = type === 2 ? 'bank/' : (type === 3 ? 'third-party/' : '');
+                                                window.viewInstitutionModal.show({ajax: {url: path + 'view', data: {institutionId: rowData.institutionId}}}, false);
+                                            }
+                                        },
+                                        edit: {
+                                            title: 'Edit Institution',
+                                            rendered:${profileBean.hasRole('edit-institution')},
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                if (data) {
+                                                    var type = rowData.institutionTypeId;
+                                                    var path = type === 2 ? 'bank/' : (type === 3 ? 'third-party/' : '');
+                                                    window.editInstitutionModal.show(
+                                                            {ajax: {url: path + 'edit', data: {institutionId: rowData.institutionId}}},
+                                                    {ajax: {url: path + 'edit.action', data: {institutionId: rowData.institutionId}, type: App.HTTP_PUT}});
+                                                }
+                                            }
+                                        },
+                                        delete: {
+                                            title: 'Delete Institution',
+                                            rendered:${profileBean.hasRole('delete-institution')},
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                App.ui.confirmDialogBox({title: 'Delete Institution'}, function () {
+                                                    var type = rowData.institutionTypeId;
+                                                    var path = type === 2 ? 'bank/' : (type === 3 ? 'third-party/' : '');
+                                                    App.ajax.doAction({ajax: {url: path + 'delete.action?institutionId=' + rowData.institutionId, type: App.HTTP_DELETE}, onsuccess: function () {
+                                                            window.institutionTable.reload(false);
+                                                        }});
+                                                }).show();
+                                            }
+                                        }
+                                    }}
+                            ]
+                        });
+                        window.showCreateInstitutionModal = function (type) {
+                            var path = type === 2 ? 'bank/' : (type === 3 ? 'third-party/' : '');
+                            window.createInstitutionModal.show({ajax: {url: path + 'create'}}, {ajax: {url: path + 'create.action'}});
+                        };
+                    });
+
+                </script>
+            </div>
+        </div>
+    </tag:content>
+
+</jsp:root>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : view-transaction-report-batch
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:tag="urn:jsptagdir:/WEB-INF/tags/">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <div class="table-readonly">
+        <table class="table table-striped">
+            <jsp:include page="transaction-report-batch.jspx"/>
+        </table>
+        <br><!-- --></br>
+        <tag:dataTable id="transactionReportSummaryTable" 
+                       title="Summary"
+                       exportable="false"
+                       searchable="false">          
+        </tag:dataTable>
+        <script type="text/javascript">
+            $(function () {
+                App.ui.datatable({
+                    id: 'transactionReportSummaryTable',
+                    ajax: {
+                        url: "${pageContext.request.contextPath}/report/transaction-report-summary/datatable/load",
+                        data: function (data) {
+                            data = data ? data : {};
+                            data['filters'] = data['filters'] || {};
+                            data['filters'].transactionReportBatch = '${transactionReportBatchBean.entity.transactionReportBatchId}';
+                            return transactionReportSummaryTable.requestData(data);
+                        }
+                    },
+                    columns: [
+                        {title: '', data: 'transactionReportSummaryId', visible: false},
+                        {title: 'Transaction Type', data: 'transactionTypeDesc'},
+                        {title: 'Total Amount', data: 'totalAmount', dataType: 'currency'},
+                        {title: 'Success Amount', data: 'successAmount', dataType: 'currency'},
+                        {title: 'Total Count', data: 'totalCount'},
+                        {title: 'Success Count', data: 'successCount'},
+                        {title: 'Failed Count', data: 'failedCount'},
+                        {title: 'Expected Count', data: 'expectedCount'}
+
+                    ]
+                });
+
+            });
+        </script>
+    </div>
+
+</jsp:root>

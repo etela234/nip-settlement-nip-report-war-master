@@ -1,0 +1,83 @@
+.clear-form {
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    /*box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);*/
+    margin: 0 auto 20px;
+    max-width: 380px;
+}
+.clear-form .form-heading, .clear-form .form-footer {
+    margin-bottom: 0;
+    padding: 15px 35px;
+}
+
+.clear-form .form-body {
+    padding: 0 35px;
+}
+
+.clear-form form {
+    margin-bottom: 0;
+}
+
+
+/** d***/
+.clear-form .form-body input.form-control,
+.clear-form .form-body input[type="text"], .clear-form .form-body input[type="password"], .clear-form .form-body .checkbox, .clear-form .form-body p.highlight {
+    /*margin-bottom: 20px;*/
+}
+.clear-form .form-body input[type="text"], .clear-form .form-body input[type="password"] {
+    background: none repeat scroll 0 0 #f6f6f6;
+    border: 1px solid #bbb;
+    border-radius: 2px;
+    /*box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;*/
+    font-size: 14px;
+    height: auto;
+    padding: 11px 18px;
+}
+/** d***/
+.clear-form .form-body .body-split:before, .clear-form .form-body .body-split:after {
+    content: "";
+    display: table;
+    line-height: 0;
+}
+.clear-form .form-body .body-split:after {
+    clear: both;
+}
+.clear-form .form-body .body-split:before, .clear-form .form-body .body-split:after {
+    content: "";
+    display: table;
+    line-height: 0;
+}
+.clear-form .form-body .body-split {
+    display: block;
+}
+.clear-form .form-body .body-split .right-col, .clear-form .form-body .body-split .left-col {
+    display: block;
+    float: left;
+    width: 154px;
+}
+/** footer***/
+.clear-form .form-footer {
+    padding-bottom: 35px;
+}
+.clear-form .form-heading, .clear-form .form-footer {
+    margin-bottom: 0;
+    padding: 15px 35px;
+}
+
+.clear-form .form-footer p a {
+    text-decoration: none;
+}
+/*
+a {
+    text-decoration: underline;
+}
+p, li, a {
+    font-size: 14px;
+    line-height: 1.5;
+}*/
+p.center{text-align:center}
+
+.form-body label{
+    cursor:pointer;
+}

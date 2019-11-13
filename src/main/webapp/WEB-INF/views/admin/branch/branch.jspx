@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : branch
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <c:choose>
+        <c:when test="${param.viewMode eq 'create' or param.viewMode eq 'edit'}">
+            <div class="box-body">
+                <div class="form-group">
+                    <label for="institution_${param.viewMode}">Institution <i class="fa fa-asterisk pull-right"><!-- --></i></label>
+                    <c:choose>
+                        <c:when test="${param.viewMode eq 'create'}">
+                            <i id="institutionAjaxIndicator_${param.viewMode}" class="ajaxIndicator pull-right"><!-- --></i>
+                            <select id="institution_${param.viewMode}" name="institutionId" class="form-control">
+                                <option value="">- Select -</option>
+                            </select>
+                        </c:when>
+                        <c:otherwise>
+                            <input id="institutionName_${param.viewMode}" name="institution.institutionName" value="${branchBean.entity.institution.institutionName}" class="form-control" disabled="true" readonly="true"/>
+                            <input id="institution_${param.viewMode}" name="institutionId" value="${branchBean.entity.institution.institutionId}" type="hidden"/>
+                        </c:otherwise>
+                    </c:choose> 
+                </div>
+                <div class="form-group">
+                    <label for="branchCode_${param.viewMode}">Branch Code <i class="fa fa-asterisk pull-right"><!-- --></i></label>
+                    <input id="branchCode_${param.viewMode}" name="branchCode" value="${branchBean.entity.branchCode}" class="form-control" placeholder="Branch Code"/>
+                </div>
+                <div class="form-group">
+                    <label for="branchName_${param.viewMode}">Branch Name <i class="fa fa-asterisk pull-right"><!-- --></i></label>
+                    <input id="branchName_${param.viewMode}" name="branchName" value="${branchBean.entity.branchName}" class="form-control" placeholder="Branch Name"/>
+                </div>
+                <div class="form-group">
+                    <label for="location_${param.viewMode}">Location <i class="fa fa-asterisk pull-right"><!-- --></i></label>
+                    <input id="location_${param.viewMode}" name="location" value="${branchBean.entity.location}" class="form-control" placeholder="Location"/>
+                </div>
+                <c:if test="${param.viewMode eq 'edit'}">
+                    <div class="form-group">
+                        <label for="status_${param.viewMode}">Status <i class="fa fa-asterisk pull-right"><!-- --></i></label>
+                        <select id="status_${param.viewMode}" name="flag" class="form-control">
+                            <option value="E">Enabled</option>
+                            <option value="D">Disabled</option>
+                        </select>
+                    </div>
+                </c:if>
+                <script type="text/javascript">
+                    $(function () {
+                        App.ui.selectDropdown({id: 'status_${param.viewMode}', selectedValue: '${branchBean.entity.flag}'});
+                        if (${param.viewMode eq 'create'}){
+                            new App.ui.selectDropdown({id: 'institution_${param.viewMode}', selectedValue: '${branchBean.entity.institution.institutionId}', ajaxIndicator: 'institutionAjaxIndicator_${param.viewMode}', ajax: {url: 'institutions'}});
+                        }
+                    });
+                </script>
+            </div>
+        </c:when>
+        <c:otherwise>
+            <tr>
+                <th>Institution:</th>
+                <td>${branchBean.entity.institution.institutionName}</td>
+            </tr>
+            <tr>
+                <th>Branch Code:</th>
+                <td>${branchBean.entity.branchCode}</td>
+            </tr>
+            <tr>
+                <th>Branch Name:</th>
+                <td>${branchBean.entity.branchName}</td>
+            </tr>
+            <tr>
+                <th>Location:</th>
+                <td>${branchBean.entity.location}</td>
+            </tr>
+            <tr>
+                <th>Status:</th>
+                <td>${branchBean.entity.flagName}</td>
+            </tr>
+        </c:otherwise>
+    </c:choose>
+
+</jsp:root>

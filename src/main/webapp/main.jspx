@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : main
+    Created on : Jan 18, 2015, 2:33:36 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+          xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+          xmlns:tag="urn:jsptagdir:/WEB-INF/tags/">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <c:choose>
+        <c:when test="${profileBean.loggedIn}">
+            <c:choose>
+                <c:when test="${profileBean.loggedInUser.inactive or profileBean.userPasswordExpired}">
+                    <tag:template title="NIP Report">
+
+                        <jsp:attribute name="header">
+                            <tag:header/>
+                        </jsp:attribute>
+
+                        <jsp:attribute name="footer">
+                            <tag:footer/>
+                        </jsp:attribute>
+
+                        <jsp:include page="WEB-INF/views/activate-password.jspx"/>
+
+                    </tag:template>
+                </c:when>
+                <c:otherwise>
+                    <tag:template title="NIP Report">
+
+                        <jsp:attribute name="header">
+                            <tag:header/>
+                        </jsp:attribute>
+
+                        <jsp:attribute name="footer">
+                            <tag:footer/>
+                        </jsp:attribute>
+
+                        <jsp:attribute name="navigator">
+                            <tag:navigator/>
+                        </jsp:attribute>
+
+                        <c:if test="${not empty navigatorBean.contentPath}">
+                            <jsp:include page="${navigatorBean.contentPath}"/>
+                        </c:if>
+
+                    </tag:template>
+                </c:otherwise>
+            </c:choose>
+        </c:when>
+        <c:otherwise>
+            <tag:template title="NIP Report">
+
+                <jsp:attribute name="header">
+                    <tag:header/>
+                </jsp:attribute>
+
+                <jsp:attribute name="footer">
+                    <tag:footer/>
+                </jsp:attribute>
+                
+
+                <jsp:include page="WEB-INF/views/login.jspx"/>
+
+            </tag:template>
+        </c:otherwise>
+    </c:choose>
+
+</jsp:root>

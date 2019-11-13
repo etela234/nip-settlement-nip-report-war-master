@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : transaction
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <c:choose>
+        <c:when test="${param.viewMode eq 'create' or param.viewMode eq 'edit'}">
+            <div class="box-body">
+            </div>
+        </c:when>
+        <c:otherwise>
+            <tr>
+                <th>Session ID:</th>
+                <td>${transactionBean.entity.sessionId}</td>
+            </tr>
+            <tr>
+                <th>Channel:</th>
+                <td>${transactionBean.entity.channel.description}</td>
+            </tr>
+            <tr>
+                <th>Transaction Type:</th>
+                <td>${transactionBean.entity.transactionType.description}</td>
+            </tr>
+            <tr>
+                <th>Source Institution:</th>
+                <td>${transactionBean.entity.sourceInstitution.institutionName}</td>
+            </tr>
+            <tr>
+                <th>Destination Institution:</th>
+                <td>${transactionBean.entity.destinationInstitution.institutionName}</td>
+            </tr>
+            <tr>
+                <th>Destination Account Number:</th>
+                <td>${transactionBean.entity.destinationAccountNumber}</td>
+            </tr>
+            <tr>
+                <th>Destination Account Name:</th>
+                <td>${transactionBean.entity.destinationAccountName}</td>
+            </tr>
+            <tr>
+                <th>Amount:</th>
+                <td>${transactionBean.entity.amount}</td>
+            </tr>
+            <tr>
+                <th>Transaction Date:</th>
+                <td id="transactionDateValue">
+                    <script>
+                        $(function () {
+                            $('td#transactionDateValue').text(App.util.formatDate('${transactionBean.entity.transactionDate.time}'));
+                        });
+                    </script>
+                </td>
+            </tr>
+            <tr>
+                <th>Payment Reference:</th>
+                <td>${transactionBean.entity.paymentReference}</td>
+            </tr>
+            <tr>
+                <th>Narration:</th>
+                <td>${transactionBean.entity.narration}</td>
+            </tr>
+            <tr>
+                <th>Response Code:</th>
+                <td>${transactionBean.entity.responseCode}</td>
+            </tr>
+            <tr>
+                <th>Response Description:</th>
+                <td>${transactionBean.entity.transactionResponse.description}</td>
+            </tr>
+        </c:otherwise>
+    </c:choose>
+
+</jsp:root>

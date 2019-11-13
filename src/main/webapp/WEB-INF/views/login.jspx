@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : login
+    Created on : Jan 18, 2015, 3:30:28 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:tag="urn:jsptagdir:/WEB-INF/tags/">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <!-- any content can be specified here, e.g.: -->
+    <link href="${pageContext.request.contextPath}/resources/app/css/login.css" rel="stylesheet" type="text/css" />
+    <tag:content hideBreadcrumb="true">
+
+        <div class="clear-form"> 
+            <div class="form-heading">
+                <h3>Sign In</h3> 
+            </div> 
+            <div class="form-body">
+                <form id="loginForm" enctype="application/x-www-form-urlencoded" action="login.action" method="post" name="loginForm">
+                    <div class="form-group">
+                        <label for="email"><i class="fa fa-user"><!-- --></i> Email <i class="fa fa-asterisk pull-right"><!-- --></i></label>
+                        <input id="email" name="email" type="text" class="form-control" placeholder="Email"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password"><i class="fa fa-key"><!-- --></i> Password <i class="fa fa-asterisk pull-right"><!-- --></i></label>
+                        <input id="password" name="password" type="password" class="form-control" placeholder="Password" onkeypress="if(App.util.isEnterKey(event))$('#loginButton').click();"/>
+                    </div>
+                    <div class="body-split">
+                        <div>                         
+                            <button id="loginButton" class="btn btn-flat btn-primary pull-right" type="button" onclick="App.login('${pageContext.request.contextPath}');
+                                            return false;"><i class="fa fa-sign-in"><!-- --></i> Login</button>
+                        </div>
+                    </div> 
+                </form> 
+            </div>
+
+            <div class="form-footer">                          
+                <hr/>
+                <p class="center"> 
+                    <a href="#" onclick="App.resetPassword('${pageContext.request.contextPath}'); return false">Forgot your password?</a>
+                </p>
+            </div>  
+
+        </div>
+
+    </tag:content>
+
+</jsp:root>

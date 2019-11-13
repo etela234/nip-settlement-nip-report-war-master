@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : navigator
+    Created on : Jan 18, 2015, 1:17:29 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <jsp:directive.tag pageEncoding="UTF-8"/> 
+
+    <jsp:directive.attribute name="message"/>
+
+
+    <section class="sidebar">
+        <!-- search form -->
+        <form action="#" method="get" class="sidebar-form" style="height:30px;border:none">
+            <!-- /.search form -->
+        </form>
+
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <ul class="sidebar-menu">
+            <li class="${empty navigatorBean.moduleName ?'active':''}">
+                <a href="${pageContext.request.contextPath}/main.jspx">
+                    <i class="fa fa-home"><!-- --></i> <span>Home</span>
+                </a>
+            </li>
+            <li class="treeview ${navigatorBean.moduleName eq 'admin'?'active':''} ${profileBean.likeAnyRole('institution,branch,user-role,user,activity-log')?'':'hide'}">
+                <a href="#">
+                    <i class="fa fa-laptop"><!-- --></i>
+                    <span>Admin</span>
+                    <i class="fa fa-angle-left pull-right"><!-- --></i>
+                </a>
+                <ul class="treeview-menu" style="display:${navigatorBean.moduleName eq 'admin'?'block':'none'}">
+                    <c:if test="${profileBean.hasAnyRole('list-institution,create-institution,edit-institution,delete-institution')}">
+                        <li><a href="${pageContext.request.contextPath}/admin/institution/list"><i class="fa fa-institution"><!-- --></i> Institutions</a></li>
+                        </c:if>
+                        <c:if test="${profileBean.hasAnyRole('list-branch,create-branch,edit-branch,delete-branch')}">
+                        <li><a href="${pageContext.request.contextPath}/admin/branch/list"><i class="fa fa-suitcase"><!-- --></i> Branches</a></li>
+                        </c:if>
+                        <c:if test="${profileBean.hasAnyRole('list-user-role,create-user-role,edit-user-role,delete-user-role')}">
+                        <li><a href="${pageContext.request.contextPath}/admin/user-role/list"><i class="fa fa-user-plus"><!-- --></i> User Roles</a></li>
+                        </c:if>
+                        <c:if test="${profileBean.hasAnyRole('list-user,create-user,edit-user,delete-user')}">
+                        <li><a href="${pageContext.request.contextPath}/admin/user/list"><i class="fa fa-users"><!-- --></i> Users</a></li>
+                        </c:if>
+                        <c:if test="${profileBean.hasAnyRole('list-activity-log')}">
+                        <li><a href="${pageContext.request.contextPath}/admin/activity-log/list"><i class="fa fa-list-alt"><!-- --></i> Audit Trail</a></li>
+                        </c:if>
+                </ul>
+            </li>
+            <li class="treeview ${navigatorBean.moduleName eq 'report'?'active':''} ${profileBean.hasAnyRole('list-transaction,list-transaction-report,list-transaction-report-batch')?'':'hide'}">
+                <a href="#">
+                    <i class="fa fa-edit"><!-- --></i> <span>Report</span>
+                    <i class="fa fa-angle-left pull-right"><!-- --></i>
+                </a>
+                <ul class="treeview-menu" style="display:${navigatorBean.moduleName eq 'report'?'block':'none'}">
+                    <c:if test="${profileBean.hasAnyRole('list-transaction')}">
+                        <li><a href="${pageContext.request.contextPath}/report/transaction/list"><i class="fa fa-tasks"><!-- --></i> Transactions</a></li>
+                        </c:if>
+                        <c:if test="${profileBean.hasAnyRole('list-transaction-report')}">
+                        <li><a href="${pageContext.request.contextPath}/report/transaction-report/list"><i class="fa fa-file-zip-o"><!-- --></i> Transaction Report</a></li>
+                        </c:if>
+                        <c:if test="${profileBean.hasAnyRole('list-transaction-report-batch')}">
+                        <li><a href="${pageContext.request.contextPath}/report/transaction-report-batch/list"><i class="fa fa-gears"><!-- --></i> Session Management</a></li>
+                        </c:if>
+                         <c:if test="${profileBean.hasAnyRole('list-smartdet')}">
+                        <li><a href="${pageContext.request.contextPath}/report/smartdet/list"><i class="fa fa-gears"><!-- --></i> Smartdet Utility</a></li>
+                        </c:if>
+                </ul>
+            </li>
+
+        </ul>
+    </section>
+
+</jsp:root>

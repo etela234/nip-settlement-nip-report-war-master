@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : user-role
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <c:choose>
+        <c:when test="${param.viewMode eq 'create' or param.viewMode eq 'edit'}">
+            <div class="box-body">
+                <div class="form-group">
+                    <label for="institutionType_${param.viewMode}">Institution Type<i class="fa fa-asterisk pull-right"><!-- --></i></label>
+                    <c:choose>
+                        <c:when test="${param.viewMode eq 'create'}">
+                            <i id="institutionTypeAjaxIndicator" class="ajaxIndicator pull-right"><!-- --></i>
+                            <select id="institutionType_${param.viewMode}" name="institutionTypeId" class="form-control">
+                                <option value="">- Select -</option>
+                            </select>
+                        </c:when>
+                        <c:otherwise>
+                            <input id="institutionTypeName_${param.viewMode}" name="institutionType.institutionTypeName" value="${userRoleBean.entity.institutionType.institutionTypeName}" class="form-control" disabled="true" readonly="true"/>
+                            <input id="institutionType_${param.viewMode}" name="institutionTypeId" value="${userRoleBean.entity.institutionType.institutionTypeId}" type="hidden"/>
+                        </c:otherwise>
+                    </c:choose> 
+                </div>
+                <div class="form-group">
+                    <label for="userRoleName_${param.viewMode}">Role Name <i class="fa fa-asterisk pull-right"><!-- --></i></label>
+                    <input id="userRoleName_${param.viewMode}" name="userRoleName" value="${userRoleBean.entity.userRoleName}" class="form-control" placeholder="User Role Name"/>
+                </div>
+                <div class="form-group">
+                    <label for="admin_${param.viewMode}" style="padding-right:10px">Admin </label>
+                    <input type="checkbox" name="admin" id="admin_${param.viewMode}" value="true" class="form-control" />
+                </div>
+                <c:if test="${param.viewMode eq 'edit'}">
+                    <div class="form-group">
+                        <label for="status_${param.viewMode}">Status <i class="fa fa-asterisk pull-right"><!-- --></i></label>
+                        <select id="status_${param.viewMode}" name="flag" class="form-control">
+                            <option value="E">Enabled</option>
+                            <option value="D">Disabled</option>
+                        </select>
+                    </div>
+                </c:if>
+                <div class="form-group">
+                    <label for="roleConfig_${param.viewMode}">Role Config <i class="fa fa-asterisk pull-right"><!-- --></i></label>
+                    <input id="roleConfigInput_${param.viewMode}" type="hidden" name="roleConfig" value="${userRoleBean.entity.roleConfig}"/>
+                    <div id="roleConfig_${param.viewMode}"></div>
+                </div>
+                <script type="text/javascript">
+                    $(function () {
+                        App.ui.selectDropdown({id: 'status_${param.viewMode}', selectedValue: '${userRoleBean.entity.flag}'});
+                        if (${param.viewMode eq 'create'}) {
+                            new App.ui.selectDropdown({id: 'institutionType_${param.viewMode}', selectedValue: '${userRoleBean.entity.institutionType.institutionTypeId}', ajaxIndicator: 'institutionTypeAjaxIndicator',
+                                ajax: {url: 'institution-types'}, onchange: function () {
+                                    var val = $(this).val();
+                                    if (val ? val !== '' : false)
+                                        window['roleConfig_${param.viewMode}'].update({ajax: {data: {institutionTypeId: val}}});
+
+                                }});
+                        }
+                        new App.ui.treeView({id: 'roleConfig_${param.viewMode}', selectedInputField: $('#roleConfigInput_${param.viewMode}'), deferred: ${param.viewMode eq 'create'},
+                            ajax: {url: 'role-config', data: {institutionTypeId: '${userRoleBean.entity.institutionType.institutionTypeId}'}},
+                            checkbox: {keep_selected_style: false, three_state: false}, plugins: ["checkbox"]
+                        });
+                        App.ui.iCheck($('#admin_${param.viewMode}'));
+                        $('#admin_${param.viewMode}').iCheck('${userRoleBean.entity.admin?"check":"uncheck"}');
+                    });
+                </script>
+            </div>
+        </c:when>
+        <c:otherwise>
+            <tr>
+                <th>Institution Type:</th>
+                <td>${userRoleBean.entity.institutionType.institutionTypeName}</td>
+            </tr>
+            <tr>
+                <th>User Role Name:</th>
+                <td>${userRoleBean.entity.userRoleName}</td>
+            </tr>
+            <tr>
+                <th>Status:</th>
+                <td>${userRoleBean.entity.flagName}</td>
+            </tr>
+            <tr>
+                <th>Role Config:</th>
+                <td><div id="roleConfig_${param.viewMode}"></div></td>
+            </tr>
+            <script type="text/javascript">
+                $(function () {
+                    new App.ui.treeView({id: 'roleConfig_${param.viewMode}', selectedValues: '${userRoleBean.entity.roleConfig}'.split(','), deferred: false,
+                        ajax: {url: 'role-config', data: {institutionTypeId: '${userRoleBean.entity.institutionType.institutionTypeId}'}},
+                        selectionIcon: true
+                    });
+                });
+            </script>
+            <style>
+                .jstree-default .jstree-clicked {
+                    background: none;
+                    border-radius: 0px;
+                    box-shadow: 0 0 0px #999 inset;
+                }
+            </style>
+        </c:otherwise>
+    </c:choose>
+
+</jsp:root>

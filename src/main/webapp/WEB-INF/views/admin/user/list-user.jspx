@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : list-user
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:tag="urn:jsptagdir:/WEB-INF/tags/">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <tag:content title="User :: List" description="Manage users">
+        <jsp:attribute name="breadcrumb">
+        </jsp:attribute>
+
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title"><!-- --></h3>
+            </div>
+            <div class="box-body">
+                <tag:dataTable id="userTable" 
+                               title="Users"
+                               exportable="true">
+                    <jsp:attribute name="tableFilter">
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="institutionFilter">Institution</label>
+                                <input id="institutionFilter" value="${userTableModel.cachedFilterMap['branch.institution.institutionName']}" name="branch.institution.institutionName" class="form-control"  type="text" placeholder="Institution"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="branchFilter">Branch</label>
+                                <input id="branchFilter" value="${userTableModel.cachedFilterMap['branch.branchName']}" name="branch.branchName" class="form-control"  type="text" placeholder="Branch"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="userRoleFilter">User Role</label>
+                                <input id="userRoleFilter" value="${userTableModel.cachedFilterMap['userRole.userRoleName']}" name="userRole.userRoleName" class="form-control"  type="text" placeholder="User Role"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="firstNameFilter">First Name</label>
+                                <input id="firstNameFilter" value="${userTableModel.cachedFilterMap['firstName']}" name="firstName" class="form-control"  type="text" placeholder="First Name"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="lastNameFilter">Last Name</label>
+                                <input id="lastNameFilter" value="${userTableModel.cachedFilterMap['lastName']}" name="lastName" class="form-control"  type="text" placeholder="Last Name"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="emailFilter">Email</label>
+                                <input id="emailFilter" value="${userTableModel.cachedFilterMap['email']}" name="email" class="form-control"  type="text" placeholder="Email"/>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="flagFilter">Status</label>
+                                <select id="flagFilter" name="flag" class="form-control">
+                                    <option value="">All</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    App.ui.selectDropdown({id: 'flagFilter', selectedValue: '${userTableModel.cachedFilterMap['flag']}'});
+                                });
+                            </script>
+                        </div>
+                    </jsp:attribute>
+                    <jsp:attribute name="tableAction">
+                        <c:if test="${profileBean.hasRole('create-user')}">
+                            <div class="btn-group pull-right">
+                                <button id="createUserMenuBtn" title="Create a New User" type="button" class="btn btn-flat btn-primary"  aria-expanded="true" onclick="window.createUserModal.show();
+                                        return false;">
+                                    <span class="fa fa-file"><!-- --></span>
+                                    New
+                                </button>
+                            </div>
+                        </c:if>
+                    </jsp:attribute>
+
+                </tag:dataTable>
+                <c:if test="${profileBean.hasRole('create-user')}">
+                    <tag:modalBox id="createUserModal" 
+                                  title="User :: New" 
+                                  contentUrl="create" 
+                                  actionUrl="create.action"
+                                  onSuccess="if(this.response.valid)window.userTable.reload();"/>
+                </c:if>
+                <c:if test="${profileBean.hasRole('edit-user')}">
+                    <tag:modalBox id="editUserModal" 
+                                  title="User :: Edit" 
+                                  contentUrl="edit" 
+                                  actionUrl="edit.action"
+                                  onSuccess="if(this.response.valid)window.userTable.reload(false);"/>
+                </c:if>
+                <tag:modalBox id="viewUserModal" 
+                              title="User :: View" 
+                              contentUrl="view" 
+                              actionButton="false"/>
+
+                <script type="text/javascript">
+                    $(function () {
+
+                        App.ui.datatable({
+                            id: 'userTable',
+                            columns: [
+                                {title: '', data: 'userId', visible: false},
+                                {title: 'Institution', data: 'institutionName', name: 'branch.institution.institutionName'},
+                                {title: 'Branch', data: 'branchName', name: 'branch.branchName'},
+                                {title: 'User Role', data: 'userRoleName', name: 'userRole.userRoleName'},
+                                {title: 'First Name', data: 'firstName'},
+                                {title: 'Last Name', data: 'lastName'},
+                                {title: 'Email', data: 'email'},
+                                {title: 'Status', data: 'flagName'},
+                                {title: 'Actions', data: 'enabled', actions: {
+                                        view: {
+                                            title: 'View User',
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                window.viewUserModal.show({ajax: {data: {userId: rowData.userId}}}, true);
+                                            }
+                                        },
+                                        edit: {
+                                            title: 'Edit User',
+                                            rendered:${profileBean.hasRole('edit-user')},
+                                            disabled: function (data, rowData) {
+                                                return '${loggedInUser.userId}' == rowData.userId;
+                                            },
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                    window.editUserModal.show({ajax: {data: {userId: rowData.userId}}}, {ajax: {data: {userId: rowData.userId}, type: App.HTTP_PUT}});
+                                            }
+                                        },
+                                        delete: {
+                                            title: 'Delete User',
+                                            rendered:${profileBean.hasRole('delete-user')},
+                                            disabled: function (data, rowData) {
+                                                return '${loggedInUser.userId}' == rowData.userId;
+                                            },
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                 App.ui.confirmDialogBox({title: 'Delete User'}, function () {
+                                                   App.ajax.doAction({ajax: {url: 'delete.action?userId=' + rowData.userId, type: App.HTTP_DELETE}, onsuccess: function () {
+                                                            window.userTable.reload(false);
+                                                        }});
+                                                }).show();
+                                            }
+                                        },
+                                        resetPassword: {
+                                            title: 'Reset Password',
+                                            rendered:${profileBean.hasRole('edit-user')},
+                                            className: 'btn-flat btn-sm btn-sm btn-danger',
+                                            icon: 'fa fa-refresh',
+                                            disabled: function (data, rowData) {
+                                                return '${loggedInUser.userId}' == rowData.userId;
+                                            },
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                App.ui.confirmDialogBox({title: 'Reset Password'}, function () {
+                                                    App.ajax.doAction({ajax: {url: 'reset-password', data: {userId: rowData.userId}}, onsuccess: function () {
+                                                            window.userTable.reload(false);
+                                                        }});
+                                                }).show();
+                                            }
+                                        },
+                                        resetDefaultPassword: {
+                                            title: 'Reset Default Password',
+                                            rendered:${userBean.nibss and profileBean.hasRole('edit-user')},
+                                            className: 'btn-flat btn-sm btn-sm btn-primary',
+                                            icon: 'fa fa-refresh',
+                                            disabled: function (data, rowData) {
+                                                return '${loggedInUser.userId}' == rowData.userId;
+                                            },
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                App.ui.confirmDialogBox({title: 'Reset Default Password'}, function () {
+                                                    App.ajax.doAction({ajax: {url: 'reset-default-password', data: {userId: rowData.userId}}, onsuccess: function () {
+                                                            window.userTable.reload(false);
+                                                        }});
+                                                }).show();
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+
+                    });
+                </script>
+            </div>
+        </div>
+    </tag:content>
+
+</jsp:root>

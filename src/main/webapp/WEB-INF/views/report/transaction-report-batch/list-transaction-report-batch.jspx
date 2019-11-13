@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : list-transaction-report
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:tag="urn:jsptagdir:/WEB-INF/tags/">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <tag:content title="Session Management :: List" description="view and manage transaction report sessions">
+        <jsp:attribute name="breadcrumb">
+        </jsp:attribute>
+
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title"><!-- --></h3>
+            </div>
+            <div class="box-body">
+                <tag:dataTable id="transactionReportBatchTable" 
+                               title="Sessions"
+                               exportable="true">
+                    <jsp:attribute name="tableFilter">
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="batchNameFilter">Session Name</label>
+                                <input id="batchNameFilter" value="${transactionReportBatchTableModel.cachedFilterMap['batchName']}" name="batchName" class="form-control"  type="text" placeholder="Session Name"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="reportTypeFilter">Report Type</label>
+                                <select id="reportTypeFilter" name="transactionReportType.reportTypeCode" class="form-control">
+                                    <option value="">All</option>
+                                    <option value="10">Settlement</option>
+                                    <option value="11">Billing</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="flagFilter">Status</label>
+                                <select id="flagFilter" name="flag" class="form-control">
+                                    <option value="">All</option>
+                                    <option value="N">New</option>
+                                    <option value="O">Open</option>
+                                    <option value="C">Close</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="fromDateFilter">From Date</label>
+                                <div class="input-group">
+                                    <input data-provide="datepicker" data-date-format="dd/mm/yyyy" id="fromDateFilter" value="${transactionReportBatchTableModel.cachedFilterMap['fromDate']}" name="fromDate" class="form-control"  type="text" placeholder="From Date"/>
+                                    <span onclick="$(this.parentNode).find('input:first').focus();" class="input-group-addon">
+                                        <span class="fa fa-calendar"><!-- --></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="toDateFilter">To Date</label>
+                                <div class="input-group">
+                                    <input data-provide="datepicker" data-date-format="dd/mm/yyyy" id="toDateFilter" value="${transactionReportBatchTableModel.cachedFilterMap['toDate']}" name="toDate" class="form-control"  type="text" placeholder="To Date"/>
+                                    <span onclick="$(this.parentNode).find('input:first').focus();" class="input-group-addon">
+                                        <span class="fa fa-calendar"><!-- --></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="createdDateFilter">Run Date</label>
+                                <div class="input-group">
+                                    <input data-provide="datepicker" data-date-format="dd/mm/yyyy" id="createdDateFilter" value="${transactionReportBatchTableModel.cachedFilterMap['createdDate']}" name="createdDate" class="form-control"  type="text" placeholder="Run Date"/>
+                                    <span onclick="$(this.parentNode).find('input:first').focus();" class="input-group-addon">
+                                        <span class="fa fa-calendar"><!-- --></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </jsp:attribute>
+                    <jsp:attribute name="tableAction">
+                        <div class="btn-group pull-right">
+                            <button id="createTransactionReportBatch" title="Create A New Session" type="button" class="btn btn-flat btn-primary"  aria-expanded="true" onclick="
+                                    createTransactionReportBatchModal.show();
+                                    return false;">
+                                <span class="fa fa-file"><!-- --></span>
+                                New Session
+                            </button>
+                        </div>
+                    </jsp:attribute>
+
+                </tag:dataTable>
+
+                <tag:modalBox id="createTransactionReportBatchModal" 
+                              title="Session :: New"
+                              contentUrl="create" 
+                              actionUrl="create.action"
+                              onSuccess="if(this.response.valid)window.transactionReportBatchTable.reload();"/>
+
+                <tag:modalBox id="viewTransactionReportBatchModal" 
+                              title="Session :: View"
+                              styleClass="modal-responsive"
+                              contentUrl="view" 
+                              actionButton="false"/>
+
+                <script type="text/javascript">
+                    $(function () {
+                        new App.ui.datatable({
+                            id: 'transactionReportBatchTable',
+                            columns: [
+                                {title: '', data: 'transactionReportBatchId', visible: false},
+                                {title: 'Session Name', data: 'batchName'},
+                                {title: 'Report Type', data: 'transactionReportTypeDesc', name: 'transactionReportType.reportTypeName'},
+                                {title: 'Run Date', data: 'createdDate', dataType: 'date'},
+                                {title: 'From Date', data: 'fromDate'},
+                                {title: 'To Date', data: 'toDate'},
+                                {title: 'Status', data: 'flagDesc'},
+                                {title: 'State', data: 'stateDesc'},
+                                {title: 'Actions', data: 'transactionReportBatchId', actions: {
+                                        view: {
+                                            title: 'View Session Detail',
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                window.viewTransactionReportBatchModal.show({ajax: {data: {transactionReportBatchId: rowData.transactionReportBatchId}}}, true);
+                                            }
+                                        },
+                                        pullException: {
+                                            title: 'Pull Exception',
+                                            className: 'btn-flat btn-sm btn-sm btn-success',
+                                            icon: 'fa fa-chain',
+                                            callback: function (data, rowData) {
+                                                App.ui.confirmDialogBox({title: 'Pull Exception'}, function () {
+                                                    if (data) {
+                                                        App.ajax.doAction({ajax: {url: 'pull-exception', data: {transactionReportBatchId: rowData.transactionReportBatchId}}, onsuccess: function () {
+                                                                window.transactionReportBatchTable.reload(false);
+                                                            }});
+                                                    }
+                                                }).show();
+
+                                            }
+                                        },
+                                        generateBillingReport: {
+                                            title: 'Generate Billing Report',
+                                            className: 'btn-flat btn-sm btn-sm btn-primary',
+                                            icon: 'fa fa-recycle',
+                                            disabled: function (data, rowData) {
+                                                return rowData.state;
+                                            },
+                                            rendered: function (data, rowData) {
+                                                return (rowData.flag === 'N' || rowData.flag === 'O') ? rowData.transactionReportTypeCode === 11 : false;
+                                            },
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                App.ui.confirmDialogBox({title: 'Generate Billing Report'}, function () {
+                                                    if (data) {
+                                                        App.ajax.doAction({ajax: {url: 'generate-billing-report', data: {transactionReportBatchId: rowData.transactionReportBatchId}}, onsuccess: function () {
+                                                                window.transactionReportBatchTable.reload(false);
+                                                            }});
+                                                    }
+                                                }).show();
+
+                                            }
+                                        },
+                                        generateSettlementReport: {
+                                            title: 'Generate Settlement Report',
+                                            className: 'btn-flat btn-sm btn-sm btn-primary',
+                                            icon: 'fa fa-gear',
+                                            disabled: function (data, rowData) {
+                                                return rowData.state;
+                                            },
+                                            rendered: function (data, rowData) {
+                                                return rowData.flag === 'N' ? rowData.transactionReportTypeCode === 10 : false;
+                                            },
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                App.ui.confirmDialogBox({title: 'Generate Settlement Report'}, function () {
+                                                    if (data) {
+                                                        App.ajax.doAction({ajax: {url: 'generate-settlement-report', data: {transactionReportBatchId: rowData.transactionReportBatchId}}, onsuccess: function () {
+                                                                window.transactionReportBatchTable.reload(false);
+                                                            }});
+                                                    }
+                                                }).show();
+
+                                            }
+                                        },
+                                        regenerateSettlementReport: {
+                                            title: 'Regenerate Settlement Report',
+                                            className: 'btn-flat btn-sm btn-sm btn-primary',
+                                            icon: 'fa fa-recycle',
+                                            disabled: function (data, rowData) {
+                                                return rowData.state;
+                                            },
+                                            rendered: function (data, rowData) {
+                                                return rowData.flag !== 'N' ? rowData.transactionReportTypeCode === 10 : false;
+                                            },
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                App.ui.confirmDialogBox({title: 'Regenerate Settlement Report'}, function () {
+                                                    if (data) {
+                                                        App.ajax.doAction({ajax: {url: 'regenerate-settlement-report', data: {transactionReportBatchId: rowData.transactionReportBatchId}}, onsuccess: function () {
+                                                                window.transactionReportBatchTable.reload(false);
+                                                            }});
+                                                    }
+                                                }).show();
+
+                                            }
+                                        },
+                                        closeSession: {
+                                            title: 'Close Session',
+                                            className: 'btn-flat btn-sm btn-sm btn-warning',
+                                            icon: 'fa fa-close',
+                                            disabled: function (data, rowData) {
+                                                return rowData.state;
+                                            },
+                                            rendered: function (data, rowData) {
+                                                return rowData.flag === 'O';
+                                            },
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                App.ui.confirmDialogBox({title: 'Close Session'}, function () {
+                                                    if (data) {
+                                                        App.ajax.doAction({ajax: {url: 'close-session', data: {transactionReportBatchId: rowData.transactionReportBatchId}}, onsuccess: function () {
+                                                                window.transactionReportBatchTable.reload(false);
+                                                            }});
+                                                    }
+                                                }).show();
+                                            }
+                                        },
+                                        compareSettlementReport: {
+                                            title: 'Compare Settlement Report for Dispute',
+                                            className: 'btn-flat btn-sm btn-sm btn-danger',
+                                            icon: 'fa fa-bug',
+                                            disabled: function (data, rowData) {
+                                                return rowData.state;
+                                            },
+                                            rendered: function (data, rowData) {
+                                                return rowData.flag !== 'N' ? rowData.transactionReportTypeCode === 10 : false;
+                                            },
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                App.ui.confirmDialogBox({title: 'Compare Settlement Report'}, function () {
+                                                    if (data) {
+                                                        App.ajax.doAction({ajax: {url: 'compare-report', data: {transactionReportBatchId: rowData.transactionReportBatchId}}, onsuccess: function () {
+                                                                window.transactionReportBatchTable.reload(false);
+                                                            }});
+                                                    }
+                                                }).show();
+
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+                    });
+
+                </script>
+            </div>
+        </div>
+    </tag:content>
+
+</jsp:root>

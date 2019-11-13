@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : transaction-report
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <c:choose>
+        <c:when test="${param.viewMode eq 'create' or param.viewMode eq 'edit'}">
+            <div class="box-body">
+            </div>
+        </c:when>
+        <c:otherwise>
+            <tr>
+                <th>Institution:</th>
+                <td>${transactionReportBean.entity.institution.institutionName}</td>
+            </tr>
+            <tr>
+                <th>Report Name:</th>
+                <td>${transactionReportBean.entity.reportName}</td>
+            </tr>
+            <tr>
+                <th>Settlement Date:</th>
+                <td id="settlementDateValue">
+                    <script>
+                        $(function () {
+                            $('td#settlementDateValue').text(App.util.formatDate('${transactionReportBean.entity.settlementDate.time}'));
+                        });
+                    </script>
+                </td>
+            </tr>
+            <tr>
+                <th>Report Type:</th>
+                <td>${transactionReportBean.entity.transactionReportBatch.transactionReportType.reportTypeName}</td>
+            </tr>
+        </c:otherwise>
+    </c:choose>
+
+</jsp:root>

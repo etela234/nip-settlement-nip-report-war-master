@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : edit-branch
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <form id="editBranchForm" enctype="application/x-www-form-urlencoded" action="edit.action" method="post" name="editBranch">
+        <jsp:include page="branch.jspx">
+            <jsp:param name="viewMode" value="edit"/>
+        </jsp:include>
+    </form>
+
+</jsp:root>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : list-activity-log
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:tag="urn:jsptagdir:/WEB-INF/tags/">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <tag:content title="Smartdet :: List" description="view smartdet details">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugin/fileUpload/css/jquery.fileupload.css"/>
+        <noscript><link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugin/fileUpload/css/jquery.fileupload-noscript.css"/><!-- --></noscript>
+
+        <jsp:attribute name="breadcrumb">
+        </jsp:attribute>
+
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title"><!-- --></h3>
+            </div>
+            <div class="box-body fileupload">
+
+                <tag:dataTable id="smartdetTable" 
+                               title="Smartdets"
+                               searchable="false">
+                    <jsp:attribute name="tableHeader">
+                        <form id="fileuploadForm" action="upload" method="POST" enctype="multipart/form-data" >
+                            <div class="row fileupload-buttonbar">
+                                <div class="col-xs-6" >
+                                    <span class="btn btn-flat btn-success fileinput-button">
+                                        <i class="glyphicon glyphicon-upload"><!-- --></i>
+                                        <span> Upload files...</span>
+                                        <input id="fileupload" type="file" name="files" multiple="multiple"><!-- --></input>
+                                    </span>
+                                    <button id="deleteFilesBtn" type="button" class="btn btn-flat btn-warning row-selection-enabled">
+                                        <i class="glyphicon glyphicon-trash"><!-- --></i>
+                                        <span> Delete files...</span>
+                                    </button>
+
+                                </div>
+
+                                <div class="col-xs-6" style="text-align:right">
+                                    <button id="addFilesBtn" type="button" class="btn btn-flat btn-primary row-selection-enabled">
+                                        <i class="glyphicon glyphicon-plus-sign"><!-- --></i>
+                                        <span> Add</span>
+                                    </button>
+                                    <button id="subtractFilesBtn" type="button" class="btn btn-flat btn-primary row-selection-enabled">
+                                        <i class="glyphicon glyphicon-minus-sign"><!-- --></i>
+                                        <span> Subtract</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </jsp:attribute>
+                    <jsp:attribute name="tableFooter">
+                        <div class="fileupload-progressbar">
+                            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar progress-bar-success" style="width:0%;"><!-- --></div>
+                            </div> 
+                        </div>
+                    </jsp:attribute>
+
+                </tag:dataTable>
+            </div>
+        </div>
+
+
+        <script type="text/javascript">
+            $(function () {
+                $("#smartdetTable_container").addClass("dropzone fade");
+                new App.ui.fileUpload({
+                    id: 'fileupload',
+                    containerId: 'smartdetTable_container',
+                    done: function (e, data) {
+                        $.each(data.result.files, function (index, file) {
+                            if (file.error)
+                                App.util.showMessage(file.error, App.SEVERITY_ERROR);
+                            else
+                                smartdetTable.dataTables.row.add({rowId: file.id, id: file.id, name: file.name, size: App.util.formatFileSize(file.size)}).draw();
+                        });
+                    }
+                });
+
+                new App.ui.datatable({
+                    id: 'smartdetTable',
+                    ajax: 'files',
+                    serverSide: false,
+                    processing: false,
+                    searching: false,
+                    lengthChange: false,
+                    paging: false,
+                    info: false,
+                    order: [[0, 'asc']],
+                    onDrawCallback:function(){
+                        var defaultFileId = $("#smartdetTable input[name='defaultFile']:checked").val();
+                        if(!defaultFileId)
+                            $("#smartdetTable input[name='defaultFile']:first").iCheck('check');
+                    },
+                    columns: [
+                        {title: '', data: 'id', selector: true,orderable:true},
+                        {title: 'File Name', data: 'name'},
+                        {title: 'Size', data: 'size'},
+                        {title: 'Default', data: 'id', render: function (data, type, rowData, meta) {
+                                if (type !== 'display')
+                                    return data;
+                                var html = $('<input name="defaultFile" />').attr('value', data).attr('type', 'radio');
+                                return $('<div/>').append(html).html();
+                            },
+                            createdCell: function (cell, cellData, rowData, rowIndex, colIndex) {
+                                var jqCell = $(cell).find("input[name='defaultFile']");
+                                App.ui.iCheck(jqCell, {skin: 'blue', handle: 'radio'});
+                            }
+                        },
+                        {title: 'Actions', data: 'id', actions: {
+                                delete: {
+                                    title: 'Delete',
+                                    callback: function (data, rowData, rowIndex, colIndex) {
+                                        deleteFile(rowData.id);
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                });
+                $('button#addFilesBtn').click(function () {
+                    downloadFile('add-files', {title: 'Add Files'});
+                });
+                $('button#subtractFilesBtn').click(function () {
+                    downloadFile('subtract-files', {title: 'Subtract Files'});
+                });
+                $('button#deleteFilesBtn').click(function () {
+                    deleteFile();
+                });
+                var downloadFile = function (url, opt) {
+                    var fileId = window.smartdetTable.getSelection('id');
+                    if (!fileId || 1 >= fileId.length) {
+                        if (fileId.length === 1)
+                            App.util.showMessage('Only one file is selected. Please select multiple files from the table below', App.SEVERITY_ERROR);
+                        else
+                            App.util.showMessage('No Selection! Please select files from the table below', App.SEVERITY_ERROR);
+                        return;
+                    }
+                    var defaultFileId = $("#smartdetTable input[name='defaultFile']:checked").val();
+                    var param = (defaultFileId ? {defaultFileId: defaultFileId, fileId: fileId} : {fileId: fileId});
+                    App.ui.confirmDialogBox(opt ? opt : {title: 'Files Action'}, function () {
+                        App.ui.fileDownload({url: url + "?" + $.param(param, true)});
+                    }).show();
+                };
+                var deleteFile = function (fileId) {
+                     fileId = fileId ? fileId : window.smartdetTable.getSelection('id');
+                    if (!fileId || $.isArray(fileId)?!fileId.length:false) {
+                        App.util.showMessage('No Selection! Please select files from the table below', App.SEVERITY_ERROR);
+                        return;
+                    }
+                    App.ui.confirmDialogBox({title: 'Delete File'}, function () {
+                        new App.ajax.doAction({ajax: {url: 'delete-file?' + $.param({fileId: fileId}, true), data: {fileId: fileId}, type: App.HTTP_DELETE},
+                            onsuccess: function (response) {
+                                $.each(response.data, function (index, file) {
+                                    smartdetTable.dataTables.rows().every(function () {
+                                        var data = this.data();
+                                        if (data ?data.id === file.id:false) {
+                                            this.remove();
+                                        }
+                                    });
+                                });
+                                smartdetTable.dataTables.draw();
+                            }
+                        });
+                    }).show();
+                };
+            });
+        </script>
+        <script src="${pageContext.request.contextPath}/resources/plugin/fileUpload/js/vendor/jquery.ui.widget.js"><!-- --></script>
+        <script src="${pageContext.request.contextPath}/resources/plugin/fileUpload/js/jquery.iframe-transport.js"><!-- --></script>
+        <script src="${pageContext.request.contextPath}/resources/plugin/fileUpload/js/jquery.fileupload.js"><!-- --></script>
+
+    </tag:content>
+
+</jsp:root>

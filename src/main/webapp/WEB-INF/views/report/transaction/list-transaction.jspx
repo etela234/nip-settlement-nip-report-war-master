@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : list-activity-log
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:tag="urn:jsptagdir:/WEB-INF/tags/">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <tag:content title="Transaction :: List" description="view transaction details">
+        <jsp:attribute name="breadcrumb">
+        </jsp:attribute>
+
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title"><!-- --></h3>
+            </div>
+            <div class="box-body">
+                <tag:dataTable id="transactionTable" 
+                               title="Transactions"
+                               exportable="true">
+                    <jsp:attribute name="tableFilter">
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="sessionIdFilter">Session ID</label>
+                                <input id="sessionIdFilter" value="${transactionTableModel.cachedFilterMap['sessionId']}" name="sessionId" class="form-control" type="text" placeholder="Session ID"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="amountFilter"> Amount</label>
+                                <input id="amountFilter" value="${transactionTableModel.cachedFilterMap['amount']}" name="amount" class="form-control"  type="text" placeholder="Amount"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="narrationFilter">Narration</label>
+                                <input id="narrationFilter" value="${transactionTableModel.cachedFilterMap['narration']}" name="narration" class="form-control"  type="text" placeholder="Narration"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="sourceInstitutionFilter">Source Institution</label>
+                                <input id="sourceInstitutionFilter" value="${transactionTableModel.cachedFilterMap['sourceInstitution.institutionName']}" name="sourceInstitution.institutionName" class="form-control"  type="text" placeholder="Source Institution"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="sourceAccountNumberFilter">Source Account Number</label>
+                                <input id="sourceAccountNumberFilter" value="${transactionTableModel.cachedFilterMap['sourceAccountNumber']}" name="sourceAccountNumber" class="form-control"  type="text" placeholder="Source Account Number"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="sourceAccountNameFilter">Source Account Name</label>
+                                <input id="sourceAccountNameFilter" value="${transactionTableModel.cachedFilterMap['sourceAccountName']}" name="sourceAccountName" class="form-control"  type="text" placeholder="Source Account Name"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="destinationInstitutionFilter">Destination Institution</label>
+                                <input id="destinationInstitutionFilter" value="${transactionTableModel.cachedFilterMap['destinationInstitution.institutionName']}" name="destinationInstitution.institutionName" class="form-control"  type="text" placeholder="Destination Institution"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="destinationAccountNumberFilter">Destination Account Number</label>
+                                <input id="destinationAccountNumberFilter" value="${transactionTableModel.cachedFilterMap['destinationAccountNumber']}" name="destinationAccountNumber" class="form-control"  type="text" placeholder="Destination Account Number"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="destinationAccountNameFilter">Destination Account Name</label>
+                                <input id="destinationAccountNameFilter" value="${transactionTableModel.cachedFilterMap['destinationAccountName']}" name="destinationAccountName" class="form-control"  type="text" placeholder="Destination Account Name"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="transactionDateFilter">Transaction Date</label>
+                                <input id="transactionDateFilter" value="${transactionTableModel.cachedFilterMap['transactionDate']}" name="transactionDate" class="form-control"  type="text" placeholder="Transaction Date"/>
+                            </div>
+                        </div>
+
+                    </jsp:attribute>
+
+
+                </tag:dataTable>
+
+                <tag:modalBox id="viewTransactionModal" 
+                              title="Transaction :: View" 
+                              contentUrl="view" 
+                              actionButton="false"/>
+
+                <script type="text/javascript">
+                    $(function () {
+                        $('#transactionDateFilter').daterangepicker({
+                            format: 'DD/MM/YYYY'
+                        });
+                        new App.ui.datatable({
+                            id: 'transactionTable',
+                            columns: [
+                                {title: '', data: 'transactionId', visible: false},
+                                {title: 'Session ID', data: 'sessionId'},
+                                {title: 'Channel', data: 'channelDesc', name: 'channel.channelName'},
+                                {title: 'Transaction Type', data: 'transactionTypeDesc', name: 'transactionType.description'},
+                                {title: 'Source Institution', data: 'sourceInstitutionName', name: 'sourceInstitution.institutionName'},
+                                {title: 'Destination Institution', data: 'destinationInstitutionName', name: 'destinationInstitution.institutionName'},
+                                {title: 'Destination Account Number', data: 'destinationAccountNumber'},
+                                {title: 'Destination Account Name', data: 'destinationAccountName'},
+                                {title: 'Amount', data: 'amount', dataType: 'currency'},
+                                {title: 'Transaction Date', data: 'transactionDate', dataType: 'date'},
+                                {title: 'Payment Reference', data: 'paymentReference'},
+                                {title: 'Narration', data: 'narration'},
+                                {title: 'Response Code', data: 'responseCode'},
+                                {title: 'Response Desc', data: 'responseDesc', name: 'transactionResponse.description'},
+                                {title: 'Actions', data: 'transactionId', actions: {
+                                        view: {
+                                            title: 'View Transaction',
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                window.viewTransactionModal.show({ajax: {data: {transactionId: rowData.transactionId}}}, true);
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </tag:content>
+
+</jsp:root>

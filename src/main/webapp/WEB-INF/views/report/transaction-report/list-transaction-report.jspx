@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : list-transaction-report
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:tag="urn:jsptagdir:/WEB-INF/tags/">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <tag:content title="Transaction Report :: List" description="view transaction report">
+        <jsp:attribute name="breadcrumb">
+        </jsp:attribute>
+
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title"><!-- --></h3>
+            </div>
+            <div class="box-body">
+                <tag:dataTable id="transactionReportTable" 
+                               title="Transaction Report"
+                               exportable="true">
+                    <jsp:attribute name="tableFilter">
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="institutionFilter">Institution</label>
+                                <input id="institutionFilter" value="${transactionReportTableModel.cachedFilterMap['institution.institutionName']}" name="institution.institutionName" class="form-control"  type="text" placeholder="Institution"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="reportNameFilter">Report Name</label>
+                                <input id="reportNameFilter" value="${transactionReportTableModel.cachedFilterMap['reportName']}" name="reportName" class="form-control"  type="text" placeholder="Report Name"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="settlementDateFilter">Settlement Date</label>
+                                <input id="settlementDateFilter" value="${transactionReportTableModel.cachedFilterMap['settlementDate']}" name="settlementDate" class="form-control"  type="text" placeholder="Settlement Date"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="reportTypeFilter">Report Type</label>
+                                <select id="reportTypeFilter" name="transactionReportBatch.transactionReportType.reportTypeCode" class="form-control">
+                                    <option value="">All</option>
+                                    <option value="10">Settlement</option>
+                                    <option value="11">Billing</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </jsp:attribute>
+
+
+                </tag:dataTable>
+
+                <tag:modalBox id="viewTransactionReportModal" 
+                              title="Transaction Report :: View" 
+                              contentUrl="view" 
+                              actionButton="false"/>
+
+                <script type="text/javascript">
+                    $(function () {
+                        $('#settlementDateFilter').daterangepicker({
+                            format: 'DD/MM/YYYY'
+                        });
+                        App.ui.datatable({
+                            id: 'transactionReportTable',
+                            columns: [
+                                {title: '', data: 'transactionReportId', visible: false},
+                                {title: 'Institution', data: 'institutionName', name: 'institution.institutionName'},
+                                {title: 'Report Name', data: 'reportName'},
+                                {title: 'Settlement Date', data: 'settlementDate', dataType: 'date'},
+                                {title: 'Report Type', data: 'reportTypeName'},
+                                {title: 'Actions', data: 'transactionReportId', actions: {
+                                        view: {
+                                            title: 'View Report',
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                window.viewTransactionReportModal.show({ajax: {data: {transactionReportId: rowData.transactionReportId}}}, true);
+                                            }
+                                        },
+                                        download: {
+                                            title: 'Download Report',
+                                            className: 'btn-flat btn-sm btn-sm btn-success',
+                                            icon: 'fa fa-download',
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                if (data) {
+                                                    App.ui.fileDownload({url: 'datatable/download/' + rowData.transactionReportId});
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+
+                    });
+                </script>
+            </div>
+        </div>
+    </tag:content>
+
+</jsp:root>

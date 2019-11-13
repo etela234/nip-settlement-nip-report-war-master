@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : home
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:tag="urn:jsptagdir:/WEB-INF/tags/">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <tag:content title="Profile">
+        <jsp:attribute name="breadcrumb">
+        </jsp:attribute>
+
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title"><!-- --></h3>
+            </div>
+            <div class="box-body">
+                
+                <table class="table">
+                    <tr>
+                        <th>Institution</th>
+                        <td>${profileBean.loggedInUser.branch.institution.institutionName}</td>
+                    </tr>
+                    <tr>
+                        <th>Branch</th>
+                        <td>${profileBean.loggedInUser.branch.branchName}</td>
+                    </tr>
+                    <tr>
+                        <th>Role</th>
+                        <td>${profileBean.loggedInUser.userRole.userRoleName}</td>
+                    </tr>
+                    <tr>
+                        <th>First Name</th>
+                        <td>${profileBean.loggedInUser.firstName}</td>
+                    </tr>
+                    <tr>
+                        <th>Last Name</th>
+                        <td>${profileBean.loggedInUser.lastName}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>${profileBean.loggedInUser.email}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>${profileBean.loggedInUser.flagName}</td>
+                    </tr>
+                    <tr>
+                        <th>Date Created</th>
+                        <td>${profileBean.formatDate(profileBean.loggedInUser.createdDate)}</td>
+                    </tr>
+                    <tr>
+                        <th>Last Login Date</th>
+                        <td>${profileBean.formatDate(profileBean.loggedInUser.lastAccessedDate)}</td>
+                    </tr>
+ 
+                </table>
+            </div>
+        </div>
+    </tag:content>
+
+</jsp:root>

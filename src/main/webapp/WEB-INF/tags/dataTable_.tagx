@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : dataTables
+    Created on : Feb 8, 2015, 9:47:45 AM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <jsp:directive.tag pageEncoding="UTF-8"/> 
+
+    <!-- The list of normal or fragment attributes can be specified here, e.g.: table-responsive-->
+    <jsp:directive.attribute required="true" name="id"/>
+    <jsp:directive.attribute name="title"/>
+    <jsp:directive.attribute name="styleClass"/>
+    <jsp:directive.attribute name="exportable" type="java.lang.Boolean"/>
+    <jsp:directive.attribute name="searchable" type="java.lang.Boolean"/>
+    <jsp:directive.attribute name="searchLabel"/>
+    <jsp:directive.attribute name="filterCollapsed" type="java.lang.Boolean"/>
+    <jsp:directive.attribute name="columnHeader" fragment="true"/>
+    <jsp:directive.attribute name="columnFooter" fragment="true"/>
+    <jsp:directive.attribute name="tableFilter" fragment="true"/>
+    <jsp:directive.attribute name="tableAction" fragment="true"/>
+
+    <div id="${id}_container" class="box box-solid box-primary datatable-box ${filterCollapsed?'collapsed-box':''}">
+        <div class="box-header">
+            <h4 class="box-title pull-left">${title}</h4>
+            <c:if test="${not empty tableFilter}">
+                <div class="box-tools pull-right">
+                    <button title="Toggle Table Filter" data-widget="collapse" class="btn btn-primary" onclick="if (window.${id})
+                                window.${id}.filterToggled();"><i class="glyphicon glyphicon-filter"><!-- --></i>Filter</button>
+                </div> 
+            </c:if>
+        </div>
+        <div class="box-body panel-body ${not empty tableFilter?'':'hide'}" style="display:${filterCollapsed?'none':'block'}" >
+            <form id="${id}_tableFilterForm" name="tableFilterForm" method="post">
+                <jsp:invoke fragment="tableFilter"/>
+            </form>
+
+            <div id="${id}_toolbarLeft" class="hide">
+                <c:if test="${empty searchable or searchable}">
+                    <button type="button" class="btn btn-flat btn-primary pull-left" title="${not empty searchLabel?(searchLabel):'Search'} ${not empty tableFilter?'with Filters':''}" onclick="if (window['${id}'])
+                                window['${id}'].reload();
+                            return false;" >
+                        <span class="fa fa-search"><!-- --></span>
+                         ${not empty searchLabel?(searchLabel):'Search'}
+                    </button>
+                </c:if>
+            </div>
+
+            <div id="${id}_toolbarRight" class="hide">
+                <c:if test="${exportable}">
+                    <button type="button" class="btn btn-flat btn-primary" title="Export as Excel" onclick="if (window['${id}'])
+                                window['${id}'].export();
+                            return false;" >
+                        <span class="fa fa-download"><!-- --></span>
+                        Export
+                    </button>
+                </c:if>
+                <jsp:invoke fragment="tableAction"/>
+            </div>
+        </div>
+
+        <table id="${id}" class="${styleClass} display table-bordered" cellspacing="0" width="100%">
+            <thead class="bg-blue-gradient">
+                <jsp:invoke fragment="columnHeader"/> 
+            </thead>
+            <tfoot>
+                <jsp:invoke fragment="columnFooter"/> 
+            </tfoot>
+            <tbody>
+                <jsp:body/> 
+            </tbody>
+        </table>
+
+    </div>
+
+
+</jsp:root>

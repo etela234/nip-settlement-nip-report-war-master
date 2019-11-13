@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : footer
+    Created on : Jan 18, 2015, 1:13:00 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+
+    <jsp:directive.tag pageEncoding="UTF-8"/> 
+
+    <script src="${pageContext.request.contextPath}/resources/bootstrap-3.3.1/js/bootstrap.min.js" type="text/javascript"><!-- --></script>
+    <script src="${pageContext.request.contextPath}/resources/jquery-ui/jquery-ui.min.js" type="text/javascript"><!-- --></script>
+
+    <script src="${pageContext.request.contextPath}/resources/plugin/json/json2.min.js" type="text/javascript"><!-- --></script>
+    <script src="${pageContext.request.contextPath}/resources/plugin/bootbox-4.3.0/bootbox.min.js" type="text/javascript"><!-- --></script>
+    <script src="${pageContext.request.contextPath}/resources/plugin/blockUI/jquery.blockUI.js" type="text/javascript"><!-- --></script>
+    <script src="${pageContext.request.contextPath}/resources/plugin/notify/bootstrap-notify.min.js" type="text/javascript"><!-- --></script>
+    <script src="${pageContext.request.contextPath}/resources/plugin/qtip/jquery.qtip.min.js" type="text/javascript"><!-- --></script>
+    <!-- daterangepicker -->
+    <script src="${pageContext.request.contextPath}/resources/plugin/moment/moment.min.js" type="text/javascript"><!-- --></script>
+    <script src="${pageContext.request.contextPath}/resources/plugin/daterangepicker/daterangepicker.js" type="text/javascript"><!-- --></script>
+    <!-- datepicker -->
+    <script src="${pageContext.request.contextPath}/resources/plugin/datepicker/js/bootstrap-datepicker.js" type="text/javascript"><!-- --></script>
+    <script src="${pageContext.request.contextPath}/resources/plugin/datatables-1.10.6/js/jquery.dataTables.min.js" type="text/javascript"><!-- --></script>
+
+    <script src="${pageContext.request.contextPath}/resources/plugin/datatables-1.10.6/js/dataTables.bootstrap.min.js" type="text/javascript"><!-- --></script>
+    <script src="${pageContext.request.contextPath}/resources/plugin/numeral/numeral.min.js" type="text/javascript"><!-- --></script>
+
+    <script src="${pageContext.request.contextPath}/resources/plugin/fileDownload/jquery.fileDownload.min.js" type="text/javascript"><!-- --></script>
+    <script src="${pageContext.request.contextPath}/resources/plugin/icheck-1.0.2/icheck.min.js" type="text/javascript"><!-- --></script>
+    <script src="${pageContext.request.contextPath}/resources/plugin/jsTree/jstree.min.js" type="text/javascript"><!-- --></script>
+    <script src="${pageContext.request.contextPath}/resources/app/js/AdminLTE.js" type="text/javascript"><!-- --></script>
+    <script src="${pageContext.request.contextPath}/resources/app/js/app.js" type="text/javascript"><!-- --></script>
+    <script type="text/javascript">
+$(function () {
+    App.init();
+});
+    </script>
+
+</jsp:root>

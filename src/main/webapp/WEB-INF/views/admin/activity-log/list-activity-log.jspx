@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : list-activity-log
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:tag="urn:jsptagdir:/WEB-INF/tags/">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <tag:content title="Audit Trail :: List" description="view audit trail">
+        <jsp:attribute name="breadcrumb">
+        </jsp:attribute>
+
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title"><!-- --></h3>
+            </div>
+            <div class="box-body">
+                <tag:dataTable id="activityLogTable" 
+                               title="Audit Trail"
+                               exportable="true">
+                    <jsp:attribute name="tableFilter">
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="institutionFilter">Institution</label>
+                                <input id="institutionFilter" value="${activityLogTableModel.cachedFilterMap['branch.institution.institutionName']}" name="branch.institution.institutionName" class="form-control"  type="text" placeholder="Institution"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="branchFilter"> Branch</label>
+                                <input id="branchFilter" value="${activityLogTableModel.cachedFilterMap['branch.branchName']}" name="branch.branchName" class="form-control"  type="text" placeholder="Branch"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="eventByFilter">Event By</label>
+                                <input id="eventByFilter" value="${activityLogTableModel.cachedFilterMap['eventBy.email']}" name="eventBy.email" class="form-control"  type="text" placeholder="Event By User"/>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="eventIpFilter">Event IP</label>
+                                <input id="eventIpFilter" value="${activityLogTableModel.cachedFilterMap['eventIp']}" name="eventIp" class="form-control"  type="text" placeholder="Event IP"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="eventDescFilter">Event Description</label>
+                                <input id="eventDescFilter" value="${activityLogTableModel.cachedFilterMap['eventStatus.description']}" name="eventStatus.description" class="form-control"  type="text" placeholder="Event Description"/>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="eventDateFilter">Event Date</label>
+                                <div class="input-group">
+                                    <input id="eventDateFilter" value="${activityLogTableModel.cachedFilterMap['eventDate']}" name="eventDate" class="form-control"  type="text" placeholder="Event Date" readonly="readonly" style="background-color:transparent"/>
+                                    <span onclick="$(this.parentNode).find('input:first').focus();" class="input-group-addon">
+                                        <span class="fa fa-calendar"><!-- --></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </jsp:attribute>
+
+
+                </tag:dataTable>
+
+                <tag:modalBox id="viewActivityLogModal" 
+                              title="Audit Trail :: View" 
+                              contentUrl="view" 
+                              actionButton="false"/>
+
+                <script type="text/javascript">
+                    $(function () {
+                        App.ui.datatable({
+                            id: 'activityLogTable',
+                            columns: [
+                                {title: '', data: 'activityLogId', visible: false},
+                                {title: 'Institution', data: 'institutionName', name: 'branch.institution.institutionName'},
+                                {title: 'Branch', data: 'branchName', name: 'branch.branchName'},
+                                {title: 'Event By', data: 'eventByEmail', name: 'eventBy.email'},
+                                {title: 'Event IP', data: 'eventIp'},
+                                {title: 'Event Date', data: 'eventDate', dataType: 'date'},
+                                {title: 'Event Description', data: 'eventDesc', name: 'eventStatus.description'},
+                                {title: 'Actions', data: 'activityLogId', actions: {
+                                        view: {
+                                            title: 'View Audit Trail',
+                                            callback: function (data, rowData, rowIndex, colIndex) {
+                                                window.viewActivityLogModal.show({ajax: {data: {activityLogId: rowData.activityLogId}}}, true);
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+                        $('#eventDateFilter').daterangepicker({
+                            format: 'DD/MM/YYYY'
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </tag:content>
+
+</jsp:root>

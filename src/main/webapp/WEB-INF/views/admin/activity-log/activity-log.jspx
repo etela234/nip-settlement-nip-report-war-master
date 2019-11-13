@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : activity-log
+    Created on : Feb 1, 2015, 1:25:03 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <c:choose>
+        <c:when test="${param.viewMode eq 'create' or param.viewMode eq 'edit'}">
+            <div class="box-body">
+            </div>
+        </c:when>
+        <c:otherwise>
+            <tr>
+                <th>Institution:</th>
+                <td>${activityLogBean.entity.branch.institution.institutionName}</td>
+            </tr>
+            <tr>
+                <th>Branch:</th>
+                <td>${activityLogBean.entity.branch.branchName}</td>
+            </tr>
+            <tr>
+                <th>Event By:</th>
+                <td>${activityLogBean.entity.eventBy.email}</td>
+            </tr>
+            <tr>
+                <th>Event IP:</th>
+                <td>${activityLogBean.entity.eventIp}</td>
+            </tr>
+            <tr>
+                <th>Event Date:</th>
+                <td id="eventDateValue">
+                    <script>
+                        $(function () {
+                            $('td#eventDateValue').text(App.util.formatDate('${activityLogBean.entity.eventDate.time}'));
+                        });
+                    </script>
+                </td>
+            </tr>
+            <tr>
+                <th>Event Description:</th>
+                <td>${activityLogBean.entity.eventStatus.description}</td>
+            </tr>
+        </c:otherwise>
+    </c:choose>
+
+</jsp:root>

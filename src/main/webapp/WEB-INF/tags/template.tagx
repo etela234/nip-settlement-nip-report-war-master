@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Document   : template
+    Created on : Jan 18, 2015, 1:14:27 PM
+    Author     : oogunjimi
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <jsp:directive.tag pageEncoding="UTF-8"/> 
+
+    <jsp:output doctype-root-element="html"
+                doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
+                doctype-system="http://www.w3c.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
+
+    <!-- The list of normal or fragment attributes can be specified here, e.g.: -->
+    <jsp:directive.attribute name="header" fragment="true"/>
+    <jsp:directive.attribute name="navigator" fragment="true"/>
+    <jsp:directive.attribute name="footer" fragment="true"/>
+    <jsp:directive.attribute name="title"/>
+    <html>
+        <head>
+            <meta charset="utf-8"/>
+            <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+            <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'/>
+            <link href="${pageContext.request.contextPath}/resources/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+            <link href="${pageContext.request.contextPath}/resources/plugin/font-awesome-4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+            <link href="${pageContext.request.contextPath}/resources/plugin/ionicons-2.0.0/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+            <!-- plugin component style -->
+            <link href="${pageContext.request.contextPath}/resources/plugin/datepicker/css/datepicker3.css" rel="stylesheet" type="text/css" />
+            <link href="${pageContext.request.contextPath}/resources/plugin/daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css" />
+            <link href="${pageContext.request.contextPath}/resources/plugin/icheck-1.0.2/skins/square/_all.min.css" rel="stylesheet" type="text/css" />
+            <link href="${pageContext.request.contextPath}/resources/plugin/datatables-1.10.6/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+            <!-- Theme style -->
+            <link href="${pageContext.request.contextPath}/resources/plugin/notify/animate.min.css" rel="stylesheet" type="text/css" />
+            <link href="${pageContext.request.contextPath}/resources/plugin/qtip/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+            <link href="${pageContext.request.contextPath}/resources/plugin/jsTree/themes/default/style.min.css" rel="stylesheet" type="text/css"/>
+            <link href="${pageContext.request.contextPath}/resources/plugin/datatables-1.10.6/css/dataTables.bootstrap.css" rel="stylesheet" type="text/css"/>
+            <link href="${pageContext.request.contextPath}/resources/app/css/AdminLTE.css" rel="stylesheet" type="text/css" />
+            <link href="${pageContext.request.contextPath}/resources/app/css/app.css" rel="stylesheet" type="text/css"/>
+
+            <!--[if lt IE 9]>
+            <script src="${pageContext.request.contextPath}/resources/plugin/html5shiv-3.7.2/html5shiv.min.js"></script>
+            <script src="${pageContext.request.contextPath}/resources/plugin/respond.js-1.4.2/respond.min.js"></script>
+            <![endif]-->
+            <script src="${pageContext.request.contextPath}/resources/jquery/jquery-1.11.2.min.js"><!-- --></script>
+            <title>${title}</title>
+        </head>
+        <body class="skin-blue fixed">
+            <c:if test="${not empty header}">
+                <header class="header">
+                    <jsp:invoke fragment="header"/>
+                </header>
+            </c:if>
+
+            <div class="wrapper row-offcanvas row-offcanvas-left">
+                <c:if test="${not empty navigator}">
+                    <aside class="left-side sidebar-offcanvas"> 
+                        <jsp:invoke fragment="navigator"/>
+                    </aside>
+                </c:if>
+                <aside class="right-side ${empty navigator?'strech':''}">
+                    <jsp:doBody/>
+                </aside>
+            </div>
+
+            <jsp:invoke fragment="footer"/>
+
+        </body>
+    </html>
+
+</jsp:root>
